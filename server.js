@@ -7,30 +7,26 @@ const setupSocket = require("./socket");
 
 const app = express();
 const server = http.createServer(app); // Create HTTP Server
-setupSocket(server); // Initialize WebSocket Handling
+setupSocket(server); // WebSocket Handling
 
 app.use(express.json()); // Middleware to parse JSON
 app.use(cors()); // Enable CORS
 
-// Ensure MONGO_URI is defined
-if (!process.env.MONGO_URI) {
-  console.error("MONGO_URI is not defined in .env file!");
-  process.exit(1); // Stop execution
-}
-const mongoURI = process.env.MONGO_URI;
 // MongoDB Connection
+if (!process.env.MONGO_URI) {
+  console.error(" MONGO_URI is not defined in .env file!");
+  process.exit(1);
+}
+
 mongoose
-  .connect(mongoURI, 
-    { useNewUrlParser: true, 
-      useUnifiedTopology: true,
-    })
-  .then(() => console.log("MongoDB Connected Successfully!"))
+  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("✅ MongoDB Connected Successfully!"))
   .catch((err) => {
-    console.error("MongoDB Connection Error:", err);
-    process.exit(1); // Stop execution if DB fails
+    console.error("❌ MongoDB Connection Error:", err);
+    process.exit(1);
   });
 
-// Create a Schema & Model
+// Users Schema & Model
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -38,7 +34,7 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// POST Request - Add User
+// Users POST API - Ye Code Same Rahega
 app.post("/api/users", async (req, res) => {
   try {
     const { name, email } = req.body;
@@ -52,7 +48,7 @@ app.post("/api/users", async (req, res) => {
   }
 });
 
-// GET Request - Fetch Users
+// Users GET API - Ye Code Same Rahega
 app.get("/api/users", async (req, res) => {
   try {
     const users = await User.find();
@@ -62,10 +58,14 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
-// Import and Use Protected Routes
+// Protected Routes
 const protectedRoutes = require("./routes/protectedRoutes");
 app.use("/api", protectedRoutes);
 
+// Profile Routes (Correctly Added)
+const profileRoutes = require("./routes/profileRoutes");
+app.use("/api", profileRoutes); // Profile Routes Include Kiye
+
 // Start Server
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
