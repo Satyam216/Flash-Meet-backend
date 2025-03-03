@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 
-const profileSchema = new mongoose.Schema({
+const ProfileSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true, immutable: true }, // ✅ Immutable email
   name: { type: String, required: true },
-  occupation: { type: String, required: true },
-  interests: { type: [String], default: [] }, // Array of interests
+  occupation: { type: String },
+  interests: { type: [String] }
 });
 
-module.exports = mongoose.model("Profile", profileSchema);
+module.exports = mongoose.model("Profile", ProfileSchema);
