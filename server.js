@@ -3,11 +3,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const http = require("http");
-const setupSocket = require("./socket");
+const setupWebSocket = require("./Websocket");
 
 const app = express();
 const server = http.createServer(app); // Create HTTP Server
-setupSocket(server); // WebSocket Handling
+
+setupWebSocket(server); // WebSocket Handling
 
 app.use(express.json()); // Middleware to parse JSON
 app.use(cors()); // Enable CORS
@@ -19,7 +20,7 @@ if (!process.env.MONGO_URI) {
 }
 
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_URI, {})
   .then(() => console.log("✅ MongoDB Connected Successfully!"))
   .catch((err) => {
     console.error("❌ MongoDB Connection Error:", err);
